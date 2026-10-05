@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Connect Camera - Smart Room Human Counter</title>
+  <meta name="description" content="Mobile camera stream client for Smart Room Human Counter WebRTC video transmission">
+  <link rel="stylesheet" href="/css/mobile.css">
+</head>
+<body>
+
+  <!-- Top Mobile Header -->
+  <header class="mobile-header">
+    <h1 class="mobile-title">
+      <span>📹</span> Smart Room Transmitter
+    </h1>
+    <p class="mobile-subtitle">Connect Camera to Smart Room Counter</p>
+  </header>
+
+  <!-- Network & Signaling Status Banner -->
+  <section class="connection-banner">
+    <div class="banner-item">
+      <span class="status-dot connecting" id="signalingDot"></span>
+      <span id="signalingStatusText">Server: Connecting...</span>
+    </div>
+    <div class="banner-item">
+      <span class="status-dot disconnected" id="desktopDot"></span>
+      <span id="desktopStatusText">Desktop: Waiting</span>
+    </div>
+  </section>
+
+  <!-- Alert / Error Notice -->
+  <div class="alert-card" id="alertCard" role="alert">
+    <div class="alert-title" id="alertTitle">Camera Permission Required</div>
+    <div id="alertMessage">Please grant camera permissions to stream video to the smart room dashboard.</div>
+  </div>
+
+  <!-- Camera Viewport / Preview -->
+  <main class="camera-viewport">
+    <video id="localVideo" autoplay playsinline muted></video>
+
+    <!-- Overlay Badges -->
+    <div class="camera-overlay">
+      <span class="stream-badge" id="cameraBadge">STANDBY</span>
+      <span class="stream-badge" id="streamResolution">--</span>
+    </div>
+
+    <!-- Standby Message -->
+    <div class="camera-standby-msg" id="cameraStandbyMsg">
+      <div class="standby-icon">📷</div>
+      <h2 style="font-size: 1.1rem; color: #fff; font-weight: 700;">Camera Ready</h2>
+      <p style="font-size: 0.8rem; color: #94a3b8; max-width: 260px;">
+        Tap "Start Camera" below to grant permission and transmit live video to the dashboard.
+      </p>
+    </div>
+  </main>
+
+  <!-- Control Actions -->
+  <section class="controls-container">
+    <button class="btn-large btn-start" id="btnToggleCamera">
+      📷 Start Camera
+    </button>
+
+    <div class="secondary-actions">
+      <button class="btn-sub" id="btnFlipCamera" disabled>
+        🔄 Flip Camera
+      </button>
+      <div class="btn-sub" style="cursor: default;">
+        ⏱ <span id="streamDuration" style="font-family: var(--font-mono); margin-left: 4px;">00:00</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer & Privacy Notice -->
+  <footer class="mobile-footer">
+    <p>🔒 Camera video is processed locally on the laptop dashboard and is not recorded.</p>
+  </footer>
+
+  <!-- WebRTC and Mobile Camera Logic -->
+  <script src="/js/webrtc-common.js"></script>
+  <script src="/js/mobile.js"></script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Room Human Counter - AI Vision Dashboard</title>
+  <meta name="description" content="Real-time smart room occupancy and human detection system using WebRTC mobile camera stream and TensorFlow.js COCO-SSD">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="brand-wrapper">
+      <div class="brand-icon">👁</div>
+      <div>
+        <h1 class="brand-title">
+          SMART ROOM HUMAN COUNTER
+          <span class="brand-badge">Live Vision AI</span>
+        </h1>
+      </div>
+    </div>
+
+    <div class="header-status-bar">
+      <div class="header-metric">
+        <span class="header-metric-label">Session Uptime</span>
+        <span class="header-metric-val" id="sessionUptime">00:00</span>
+      </div>
+
+      <div class="header-metric">
+        <span class="header-metric-label">Inference Engine</span>
+        <span class="header-metric-val" id="engineStatus" style="color: #fbbf24;">Loading Model...</span>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="btnStartStop" title="Pause or Resume Monitoring">
+          ⏸ Stop Monitoring
+        </button>
+        <button class="btn btn-secondary" id="btnReconnect" title="Reset WebRTC and reconnect">
+          🔄 Reconnect
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Container -->
+  <main class="dashboard-container">
+    
+    <!-- LEFT COLUMN: Network & Connection -->
+    <aside class="left-column">
+      
+      <!-- Connection & QR Card -->
+      <section class="card" aria-labelledby="conn-title">
+        <div class="card-header">
+          <h2 class="card-title" id="conn-title">
+            <span>📱</span> Mobile Camera Connection
+          </h2>
+        </div>
+
+        <div class="qr-wrapper">
+          <div class="qr-box">
+            <img id="qrImage" alt="Scan QR Code to open mobile camera" src="" />
+          </div>
+          <p class="qr-caption">Scan with your mobile camera to begin streaming</p>
+        </div>
+
+        <!-- Direct LAN URL -->
+        <div class="url-box">
+          <span class="url-text" id="mobileUrlDisplay">Loading network URL...</span>
+          <button class="url-copy-btn" id="btnCopyUrl" title="Copy URL">Copy</button>
+        </div>
+
+        <!-- Connection Status Pill -->
+        <div class="status-pill status-waiting" id="mobileStatusPill">
+          <span class="status-dot pulse"></span>
+          <span>Waiting for mobile camera...</span>
+        </div>
+
+        <!-- Network Interface Selector -->
+        <div style="margin-top: 0.85rem;">
+          <label for="ipSelect" style="font-size: 0.72rem; color: var(--text-dim); display: block; margin-bottom: 0.25rem;">
+            Network Interface:
+          </label>
+          <select id="ipSelect" class="select-input" style="width: 100%;"></select>
+        </div>
+      </section>
+
+      <!-- Network Setup & Firewall Card -->
+      <section class="card" aria-labelledby="net-title">
+        <div class="card-header">
+          <h2 class="card-title" id="net-title">
+            <span>🌐</span> Network Setup
+          </h2>
+        </div>
+
+        <table class="network-info-table">
+          <tbody>
+            <tr>
+              <td>Server Status</td>
+              <td><span style="color: #34d399;">● Running</span></td>
+            </tr>
+            <tr>
+              <td>Host</td>
+              <td id="infoHost">0.0.0.0</td>
+            </tr>
+            <tr>
+              <td>Port</td>
+              <td id="infoPort">5173</td>
+            </tr>
+            <tr>
+              <td>LAN IP</td>
+              <td id="infoLanIp">Detecting...</td>
+            </tr>
+            <tr>
+              <td>Protocol</td>
+              <td id="infoProtocol">HTTP</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="firewall-notice">
+          ⚠️ Make sure the mobile and computer are connected to the same Wi-Fi network and that application port 5173 is allowed through the computer firewall.
+        </div>
+
+        <div class="privacy-banner">
+          <span>🔒</span>
+          <span>Camera video is processed locally and is not recorded or stored.</span>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- CENTER COLUMN: Camera Viewfinder & Vision Feed -->
+    <section class="center-column">
+      <div class="card viewfinder-card" aria-label="Live Camera Vision Feed">
+        
+        <div class="viewfinder-wrapper" id="viewfinderWrapper">
+          <!-- WebRTC Remote Video Stream -->
+          <video id="remoteVideo" autoplay playsinline muted></video>
+          
+          <!-- Bounding Boxes Canvas Overlay -->
+          <canvas id="detectionCanvas"></canvas>
+
+          <!-- Empty State (when no video is streaming) -->
+          <div class="viewfinder-empty-state" id="emptyState">
+            <div class="radar-circle">
+              <span class="radar-icon">📡</span>
+            </div>
+            <h3 style="font-size: 1.15rem; color: #f8fafc; font-weight: 700;">Waiting for mobile camera...</h3>
+            <p style="font-size: 0.85rem; max-width: 380px; text-align: center; color: #94a3b8;">
+              Scan the QR code on the left with your phone or open the LAN URL in your mobile browser.
+            </p>
+            <div style="margin-top: 0.5rem;">
+              <button class="btn btn-secondary btn-sm" id="btnTestWebcam">
+                🧪 Test with Laptop Webcam
+              </button>
+            </div>
+          </div>
+
+          <!-- Video HUD Status -->
+          <div class="viewfinder-hud">
+            <div class="hud-badge rec">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #ef4444; display: inline-block;"></span>
+              <span id="hudSource">No Signal</span>
+            </div>
+            <div class="toolbar-group">
+              <div class="hud-badge" id="hudResolution">--</div>
+              <div class="hud-badge" id="hudFps">-- FPS</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Viewfinder Toolbar -->
+        <div class="viewfinder-toolbar">
+          <div class="toolbar-group">
+            <label style="font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+              <input type="checkbox" id="toggleBoxes" checked /> Bounding Boxes
+            </label>
+            <label style="font-size: 0.78rem; display: flex; align-items: center; gap: 0.35rem; cursor: pointer; margin-left: 0.5rem;">
+              <input type="checkbox" id="toggleLabels" checked /> Person Tag & %
+            </label>
+          </div>
+
+          <div class="toolbar-group">
+            <button class="btn btn-secondary btn-sm" id="btnFullscreen">
+              ⛶ Fullscreen
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN: Occupancy & Detection Analytics -->
+    <aside class="right-column">
+      
+      <!-- Hero Human Count Card -->
+      <section class="card hero-count-card" aria-labelledby="count-title">
+        <h2 class="hero-count-label" id="count-title">Total Human Count</h2>
+        <div class="hero-count-value" id="heroCount">0</div>
+        <div class="hero-count-sub" id="heroCountSub">Raw Detection: 0 | Smoothed Window: 7f</div>
+
+        <!-- Crowd Strength Badge -->
+        <div class="crowd-tier-badge tier-low" id="crowdBadge">
+          Crowd Level: LOW
+        </div>
+
+        <!-- Real-time Sparkline Trend -->
+        <div class="trend-chart-wrapper">
+          <div style="display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-dim); margin-bottom: 0.2rem;">
+            <span>OCCUPANCY TREND (LAST 30s)</span>
+            <span>REAL-TIME</span>
+          </div>
+          <canvas class="trend-canvas" id="trendCanvas"></canvas>
+        </div>
+      </section>
+
+      <!-- Detection Statistics Card -->
+      <section class="card" aria-labelledby="stats-title">
+        <div class="card-header">
+          <h2 class="card-title" id="stats-title">
+            <span>📊</span> Detection Statistics
+          </h2>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-item-label">Average Count</div>
+            <div class="stat-item-value" id="statAvgCount">0.0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item-label">Maximum Peak</div>
+            <div class="stat-item-value" id="statMaxCount">0</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item-label">Avg Confidence</div>
+            <div class="stat-item-value" id="statConfidence">--</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item-label">Inference FPS</div>
+            <div class="stat-item-value" id="statInferenceFps">--</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Vision Engine Controls -->
+      <section class="card" aria-labelledby="settings-title">
+        <div class="card-header">
+          <h2 class="card-title" id="settings-title">
+            <span>⚙️</span> Detection Controls
+          </h2>
+        </div>
+
+        <div class="setting-row">
+          <label class="setting-label" for="confidenceSlider">Confidence Threshold</label>
+          <span class="setting-val-display" id="confidenceValDisplay">50%</span>
+        </div>
+        <input type="range" id="confidenceSlider" class="slider-input" min="0.2" max="0.9" step="0.05" value="0.5" />
+
+        <div class="setting-row" style="margin-top: 0.85rem;">
+          <label class="setting-label" for="smoothingSelect">Temporal Smoothing</label>
+          <select id="smoothingSelect" class="select-input">
+            <option value="1">Off (Instant Raw)</option>
+            <option value="3">3 Frames (Fast)</option>
+            <option value="7" selected>7 Frames (Balanced)</option>
+            <option value="12">12 Frames (Ultra Stable)</option>
+          </select>
+        </div>
+
+        <div class="setting-row" style="margin-top: 0.85rem;">
+          <label class="setting-label" for="soundAlertToggle">Audible Crowd Alert</label>
+          <input type="checkbox" id="soundAlertToggle" />
+        </div>
+      </section>
+
+    </aside>
+
+  </main>
+
+  <!-- Load TensorFlow.js (Local Vendor with CDN fallback) -->
+  <script src="/vendor/tf.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js';"></script>
+  <!-- Load COCO-SSD (Local Vendor with CDN fallback) -->
+  <script src="/vendor/coco-ssd.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js';"></script>
+  
+  <!-- WebRTC and Dashboard Logic -->
+  <script src="/js/webrtc-common.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
