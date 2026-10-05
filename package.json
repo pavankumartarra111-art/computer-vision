@@ -1,74 +1,41 @@
 {
-  "name": "ws",
-  "version": "8.22.0",
-  "description": "Simple to use, blazing fast and thoroughly tested websocket client and server for Node.js",
-  "keywords": [
-    "HyBi",
-    "Push",
-    "RFC-6455",
-    "WebSocket",
-    "WebSockets",
-    "real-time"
-  ],
-  "homepage": "https://github.com/websockets/ws",
-  "bugs": "https://github.com/websockets/ws/issues",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/websockets/ws.git"
-  },
-  "author": "Einar Otto Stangvik <einaros@gmail.com> (http://2x.io)",
-  "license": "MIT",
+  "name": "which-module",
+  "version": "2.0.1",
+  "description": "Find the module object for something that was require()d",
   "main": "index.js",
-  "exports": {
-    ".": {
-      "browser": "./browser.js",
-      "import": "./wrapper.mjs",
-      "require": "./index.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "browser": "browser.js",
-  "engines": {
-    "node": ">=10.0.0"
+  "scripts": {
+    "pretest": "standard",
+    "test": "nyc ava",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "release": "standard-version"
   },
   "files": [
-    "browser.js",
-    "index.js",
-    "lib/*.js",
-    "wrapper.mjs"
+    "index.js"
   ],
-  "scripts": {
-    "test": "nyc --reporter=lcov --reporter=text mocha --throw-deprecation test/*.test.js",
-    "integration": "mocha --throw-deprecation test/*.integration.js",
-    "lint": "eslint . && prettier --check --ignore-path .gitignore \"**/*.{json,md,yaml,yml}\""
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nexdrew/which-module.git"
   },
-  "peerDependencies": {
-    "bufferutil": "^4.0.1",
-    "utf-8-validate": ">=5.0.2"
+  "keywords": [
+    "which",
+    "module",
+    "exports",
+    "filename",
+    "require",
+    "reverse",
+    "lookup"
+  ],
+  "author": "nexdrew",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nexdrew/which-module/issues"
   },
-  "peerDependenciesMeta": {
-    "bufferutil": {
-      "optional": true
-    },
-    "utf-8-validate": {
-      "optional": true
-    }
-  },
+  "homepage": "https://github.com/nexdrew/which-module#readme",
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "benchmark": "^2.1.4",
-    "bufferutil": "^4.0.1",
-    "eslint": "^10.0.1",
-    "eslint-config-prettier": "^10.0.1",
-    "eslint-plugin-prettier": "^5.0.0",
-    "globals": "^17.0.0",
-    "mocha": "^8.4.0",
-    "nyc": "^15.0.0",
-    "prettier": "^3.0.0",
-    "utf-8-validate": "^6.0.0"
-  },
-  "allowScripts": {
-    "bufferutil": true,
-    "utf-8-validate": true
+    "ava": "^2.0.0",
+    "coveralls": "^3.0.3",
+    "nyc": "^14.0.0",
+    "standard": "^14.0.0",
+    "standard-version": "^7.0.0"
   }
 }
