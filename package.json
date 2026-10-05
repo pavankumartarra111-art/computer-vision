@@ -1,0 +1,27 @@
+{
+  "name": "smart-room-human-counter",
+  "version": "1.0.0",
+  "description": "Real-time Smart Room Human Counter using WebRTC Mobile Camera Stream and TensorFlow.js Person Detection",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "start:https": "node server/server.js --https",
+    "dev": "node server/server.js"
+  },
+  "keywords": [
+    "webrtc",
+    "human-counter",
+    "computer-vision",
+    "tensorflow-js",
+    "coco-ssd",
+    "smart-room"
+  ],
+  "author": "Smart Room AI",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "selfsigned": "^2.4.1",
+    "ws": "^8.18.0"
+  }
+}
