@@ -1,58 +1,34 @@
-# which-module
+# utils-merge
 
-> Find the module object for something that was require()d
+[![Version](https://img.shields.io/npm/v/utils-merge.svg?label=version)](https://www.npmjs.com/package/utils-merge)
+[![Build](https://img.shields.io/travis/jaredhanson/utils-merge.svg)](https://travis-ci.org/jaredhanson/utils-merge)
+[![Quality](https://img.shields.io/codeclimate/github/jaredhanson/utils-merge.svg?label=quality)](https://codeclimate.com/github/jaredhanson/utils-merge)
+[![Coverage](https://img.shields.io/coveralls/jaredhanson/utils-merge.svg)](https://coveralls.io/r/jaredhanson/utils-merge)
+[![Dependencies](https://img.shields.io/david/jaredhanson/utils-merge.svg)](https://david-dm.org/jaredhanson/utils-merge)
 
-[![Build Status](https://travis-ci.org/nexdrew/which-module.svg?branch=master)](https://travis-ci.org/nexdrew/which-module)
-[![Coverage Status](https://coveralls.io/repos/github/nexdrew/which-module/badge.svg?branch=master)](https://coveralls.io/github/nexdrew/which-module?branch=master)
-[![Standard Version](https://img.shields.io/badge/release-standard%20version-brightgreen.svg)](https://github.com/conventional-changelog/standard-version)
-[![Greenkeeper badge](https://badges.greenkeeper.io/nexdrew/which-module.svg)](https://greenkeeper.io/)
 
-Find the `module` object in `require.cache` for something that was `require()`d
-or `import`ed - essentially a reverse `require()` lookup.
+Merges the properties from a source object into a destination object.
 
-Useful for libs that want to e.g. lookup a filename for a module or submodule
-that it did not `require()` itself.
+## Install
 
-## Install and Usage
-
-```
-npm install --save which-module
+```bash
+$ npm install utils-merge
 ```
 
-```js
-const whichModule = require('which-module')
+## Usage
 
-console.log(whichModule(require('something')))
-// Module {
-//   id: '/path/to/project/node_modules/something/index.js',
-//   exports: [Function],
-//   parent: ...,
-//   filename: '/path/to/project/node_modules/something/index.js',
-//   loaded: true,
-//   children: [],
-//   paths: [ '/path/to/project/node_modules/something/node_modules',
-//            '/path/to/project/node_modules',
-//            '/path/to/node_modules',
-//            '/path/node_modules',
-//            '/node_modules' ] }
+```javascript
+var a = { foo: 'bar' }
+  , b = { bar: 'baz' };
+
+merge(a, b);
+// => { foo: 'bar', bar: 'baz' }
 ```
-
-## API
-
-### `whichModule(exported)`
-
-Return the [`module` object](https://nodejs.org/api/modules.html#modules_the_module_object),
-if any, that represents the given argument in the `require.cache`.
-
-`exported` can be anything that was previously `require()`d or `import`ed as a
-module, submodule, or dependency - which means `exported` is identical to the
-`module.exports` returned by this method.
-
-If `exported` did not come from the `exports` of a `module` in `require.cache`,
-then this method returns `null`.
 
 ## License
 
-ISC © Contributors
+[The MIT License](http://opensource.org/licenses/MIT)
 
-[opensourceregistry_package_id]: # (458260416784685e5ef3091fee54001785dd4360406aa3000315ff256eef6878)
+Copyright (c) 2013-2017 Jared Hanson <[http://jaredhanson.net/](http://jaredhanson.net/)>
+
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/vK9dyjRnnWsMzzJTQ57fRJpH/jaredhanson/utils-merge'>  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/vK9dyjRnnWsMzzJTQ57fRJpH/jaredhanson/utils-merge.svg' /></a>

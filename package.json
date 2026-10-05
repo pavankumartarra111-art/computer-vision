@@ -1,41 +1,40 @@
 {
-  "name": "which-module",
-  "version": "2.0.1",
-  "description": "Find the module object for something that was require()d",
-  "main": "index.js",
-  "scripts": {
-    "pretest": "standard",
-    "test": "nyc ava",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "release": "standard-version"
-  },
-  "files": [
-    "index.js"
+  "name": "utils-merge",
+  "version": "1.0.1",
+  "description": "merge() utility function",
+  "keywords": [
+    "util"
   ],
+  "author": {
+    "name": "Jared Hanson",
+    "email": "jaredhanson@gmail.com",
+    "url": "http://www.jaredhanson.net/"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nexdrew/which-module.git"
+    "url": "git://github.com/jaredhanson/utils-merge.git"
   },
-  "keywords": [
-    "which",
-    "module",
-    "exports",
-    "filename",
-    "require",
-    "reverse",
-    "lookup"
-  ],
-  "author": "nexdrew",
-  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nexdrew/which-module/issues"
+    "url": "http://github.com/jaredhanson/utils-merge/issues"
   },
-  "homepage": "https://github.com/nexdrew/which-module#readme",
+  "license": "MIT",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    }
+  ],
+  "main": "./index",
+  "dependencies": {},
   "devDependencies": {
-    "ava": "^2.0.0",
-    "coveralls": "^3.0.3",
-    "nyc": "^14.0.0",
-    "standard": "^14.0.0",
-    "standard-version": "^7.0.0"
+    "make-node": "0.3.x",
+    "mocha": "1.x.x",
+    "chai": "1.x.x"
+  },
+  "engines": {
+    "node": ">= 0.4.0"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/mocha --reporter spec --require test/bootstrap/node test/*.test.js"
   }
 }

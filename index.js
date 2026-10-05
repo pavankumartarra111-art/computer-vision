@@ -1,9 +1,23 @@
-'use strict'
+/**
+ * Merge object b with object a.
+ *
+ *     var a = { foo: 'bar' }
+ *       , b = { bar: 'baz' };
+ *
+ *     merge(a, b);
+ *     // => { foo: 'bar', bar: 'baz' }
+ *
+ * @param {Object} a
+ * @param {Object} b
+ * @return {Object}
+ * @api public
+ */
 
-module.exports = function whichModule (exported) {
-  for (var i = 0, files = Object.keys(require.cache), mod; i < files.length; i++) {
-    mod = require.cache[files[i]]
-    if (mod.exports === exported) return mod
+exports = module.exports = function(a, b){
+  if (a && b) {
+    for (var key in b) {
+      a[key] = b[key];
+    }
   }
-  return null
-}
+  return a;
+};
