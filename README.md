@@ -1,140 +1,109 @@
-<p align="center">
-  <img width="250" src="/yargs-logo.png">
-</p>
-<h1 align="center"> Yargs </h1>
-<p align="center">
-  <b >Yargs be a node.js library fer hearties tryin' ter parse optstrings</b>
-</p>
-
-<br>
+# y18n
 
 [![Build Status][travis-image]][travis-url]
+[![Coverage Status][coveralls-image]][coveralls-url]
 [![NPM version][npm-image]][npm-url]
 [![js-standard-style][standard-image]][standard-url]
-[![Coverage][coverage-image]][coverage-url]
-[![Conventional Commits][conventional-commits-image]][conventional-commits-url]
-[![Slack][slack-image]][slack-url]
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
-## Description :
-Yargs helps you build interactive command line tools, by parsing arguments and generating an elegant user interface.
+The bare-bones internationalization library used by yargs.
 
-It gives you:
+Inspired by [i18n](https://www.npmjs.com/package/i18n).
 
-* commands and (grouped) options (`my-program.js serve --port=5000`).
-* a dynamically generated help menu based on your arguments.
+## Examples
 
-> <img width="400" src="/screen.png">
+_simple string translation:_
 
-* bash-completion shortcuts for commands and options.
-* and [tons more](/docs/api.md).
+```js
+var __ = require('y18n').__
 
-## Installation
-
-Stable version:
-```bash
-npm i yargs
+console.log(__('my awesome string %s', 'foo'))
 ```
 
-Bleeding edge version with the most recent features:
-```bash
-npm i yargs@next
+output:
+
+`my awesome string foo`
+
+_using tagged template literals_
+
+```js
+var __ = require('y18n').__
+var str = 'foo'
+
+console.log(__`my awesome string ${str}`)
 ```
 
-## Usage :
+output:
 
-### Simple Example
+`my awesome string foo`
 
-```javascript
-#!/usr/bin/env node
-const {argv} = require('yargs')
+_pluralization support:_
 
-if (argv.ships > 3 && argv.distance < 53.5) {
-  console.log('Plunder more riffiwobbles!')
-} else {
-  console.log('Retreat from the xupptumblers!')
-}
+```js
+var __n = require('y18n').__n
+
+console.log(__n('one fish %s', '%d fishes %s', 2, 'foo'))
 ```
 
-```bash
-$ ./plunder.js --ships=4 --distance=22
-Plunder more riffiwobbles!
+output:
 
-$ ./plunder.js --ships 12 --distance 98.7
-Retreat from the xupptumblers!
-```
+`2 fishes foo`
 
-### Complex Example
+## JSON Language Files
 
-```javascript
-#!/usr/bin/env node
-require('yargs') // eslint-disable-line
-  .command('serve [port]', 'start the server', (yargs) => {
-    yargs
-      .positional('port', {
-        describe: 'port to bind on',
-        default: 5000
-      })
-  }, (argv) => {
-    if (argv.verbose) console.info(`start server on :${argv.port}`)
-    serve(argv.port)
-  })
-  .option('verbose', {
-    alias: 'v',
-    type: 'boolean',
-    description: 'Run with verbose logging'
-  })
-  .argv
-```
+The JSON language files should be stored in a `./locales` folder.
+File names correspond to locales, e.g., `en.json`, `pirate.json`.
 
-Run the example above with `--help` to see the help for the application.
+When strings are observed for the first time they will be
+added to the JSON file corresponding to the current locale.
 
-## TypeScript
+## Methods
 
-yargs has type definitions at [@types/yargs][type-definitions].
+### require('y18n')(config)
 
-```
-npm i @types/yargs --save-dev
-```
+Create an instance of y18n with the config provided, options include:
 
-See usage examples in [docs](/docs/typescript.md).
+* `directory`: the locale directory, default `./locales`.
+* `updateFiles`: should newly observed strings be updated in file, default `true`.
+* `locale`: what locale should be used.
+* `fallbackToLanguage`: should fallback to a language-only file (e.g. `en.json`)
+  be allowed if a file matching the locale does not exist (e.g. `en_US.json`),
+  default `true`.
 
-## Webpack
+### y18n.\_\_(str, arg, arg, arg)
 
-See usage examples of yargs with webpack in [docs](/docs/webpack.md).
+Print a localized string, `%s` will be replaced with `arg`s.
 
-## Community :
+This function can also be used as a tag for a template literal. You can use it
+like this: <code>__&#96;hello ${'world'}&#96;</code>. This will be equivalent to
+`__('hello %s', 'world')`.
 
-Having problems? want to contribute? join our [community slack](http://devtoolscommunity.herokuapp.com).
+### y18n.\_\_n(singularString, pluralString, count, arg, arg, arg)
 
-## Documentation :
+Print a localized string with appropriate pluralization. If `%d` is provided
+in the string, the `count` will replace this placeholder.
 
-### Table of Contents
+### y18n.setLocale(str)
 
-* [Yargs' API](/docs/api.md)
-* [Examples](/docs/examples.md)
-* [Parsing Tricks](/docs/tricks.md)
-  * [Stop the Parser](/docs/tricks.md#stop)
-  * [Negating Boolean Arguments](/docs/tricks.md#negate)
-  * [Numbers](/docs/tricks.md#numbers)
-  * [Arrays](/docs/tricks.md#arrays)
-  * [Objects](/docs/tricks.md#objects)
-  * [Quotes](/docs/tricks.md#quotes)
-* [Advanced Topics](/docs/advanced.md)
-  * [Composing Your App Using Commands](/docs/advanced.md#commands)
-  * [Building Configurable CLI Apps](/docs/advanced.md#configuration)
-  * [Customizing Yargs' Parser](/docs/advanced.md#customizing)
-* [Contributing](/contributing.md)
+Set the current locale being used.
 
-[travis-url]: https://travis-ci.org/yargs/yargs
-[travis-image]: https://img.shields.io/travis/yargs/yargs/master.svg
-[npm-url]: https://www.npmjs.com/package/yargs
-[npm-image]: https://img.shields.io/npm/v/yargs.svg
+### y18n.getLocale()
+
+What locale is currently being used?
+
+### y18n.updateLocale(obj)
+
+Update the current locale with the key value pairs in `obj`.
+
+## License
+
+ISC
+
+[travis-url]: https://travis-ci.org/yargs/y18n
+[travis-image]: https://img.shields.io/travis/yargs/y18n.svg
+[coveralls-url]: https://coveralls.io/github/yargs/y18n
+[coveralls-image]: https://img.shields.io/coveralls/yargs/y18n.svg
+[npm-url]: https://npmjs.org/package/y18n
+[npm-image]: https://img.shields.io/npm/v/y18n.svg
 [standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
-[standard-url]: http://standardjs.com/
-[conventional-commits-image]: https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg
-[conventional-commits-url]: https://conventionalcommits.org/
-[slack-image]: http://devtoolscommunity.herokuapp.com/badge.svg
-[slack-url]: http://devtoolscommunity.herokuapp.com
-[type-definitions]: https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/yargs
-[coverage-image]: https://img.shields.io/nycrc/yargs/yargs
-[coverage-url]: https://github.com/yargs/yargs/blob/master/.nycrc
+[standard-url]: https://github.com/feross/standard
