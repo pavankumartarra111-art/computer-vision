@@ -1,55 +1,30 @@
-{
-  "name": "undici-types",
-  "version": "8.9.0",
-  "description": "A stand-alone types package for Undici",
-  "homepage": "https://undici.nodejs.org",
-  "bugs": {
-    "url": "https://github.com/nodejs/undici/issues"
+﻿{
+  "name": "smart-room-human-counter",
+  "version": "1.0.0",
+  "description": "Real-time Smart Room Human Counter using WebRTC Mobile Camera Stream and TensorFlow.js Person Detection",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "start:https": "node server/server.js --https",
+    "dev": "node server/server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nodejs/undici.git"
+  "engines": {
+    "node": ">=18.0.0"
   },
-  "license": "MIT",
-  "types": "index.d.ts",
-  "files": [
-    "*.d.ts"
+  "keywords": [
+    "webrtc",
+    "human-counter",
+    "computer-vision",
+    "tensorflow-js",
+    "coco-ssd",
+    "smart-room"
   ],
-  "contributors": [
-    {
-      "name": "Daniele Belardi",
-      "url": "https://github.com/dnlup",
-      "author": true
-    },
-    {
-      "name": "Ethan Arrowood",
-      "url": "https://github.com/ethan-arrowood",
-      "author": true
-    },
-    {
-      "name": "Matteo Collina",
-      "url": "https://github.com/mcollina",
-      "author": true
-    },
-    {
-      "name": "Matthew Aitken",
-      "url": "https://github.com/KhafraDev",
-      "author": true
-    },
-    {
-      "name": "Robert Nagy",
-      "url": "https://github.com/ronag",
-      "author": true
-    },
-    {
-      "name": "Szymon Marczak",
-      "url": "https://github.com/szmarczak",
-      "author": true
-    },
-    {
-      "name": "Tomas Della Vedova",
-      "url": "https://github.com/delvedor",
-      "author": true
-    }
-  ]
+  "author": "Smart Room AI",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "selfsigned": "^2.4.1",
+    "ws": "^8.18.0"
+  }
 }

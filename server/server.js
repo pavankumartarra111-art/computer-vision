@@ -87,9 +87,19 @@ app.get('/mobile', (req, res) => {
 // API: System & Network Configuration
 app.get('/api/config', async (req, res) => {
   const { primaryIp, allIps } = getNetworkInterfacesInfo();
-  const protocol = USE_HTTPS ? 'https' : 'http';
-  const customIp = req.query.ip || primaryIp;
-  const mobileUrl = `${protocol}://${customIp}:${PORT}/mobile`;
+  const reqHost = req.get('host');
+  const isCloudHost = reqHost && !reqHost.startsWith('localhost') && !reqHost.startsWith('127.0.0.1') && !reqHost.startsWith('192.168.') && !reqHost.startsWith('10.');
+  const protocol = req.get('x-forwarded-proto') || (USE_HTTPS ? 'https' : 'http');
+  const customIp = req.query.ip || (isCloudHost ? reqHost : primaryIp);
+  
+  let mobileUrl;
+  if (req.query.ip) {
+    mobileUrl = `${protocol}://${req.query.ip}:${PORT}/mobile`;
+  } else if (isCloudHost) {
+    mobileUrl = `${protocol}://${reqHost}/mobile`;
+  } else {
+    mobileUrl = `${protocol}://${primaryIp}:${PORT}/mobile`;
+  }
 
   try {
     const qrDataUrl = await QRCode.toDataURL(mobileUrl, {
@@ -107,9 +117,9 @@ app.get('/api/config', async (req, res) => {
       selectedIp: customIp,
       allIps,
       port: PORT,
-      host: HOST,
+      host: reqHost || HOST,
       protocol,
-      isHttps: USE_HTTPS,
+      isHttps: protocol === 'https' || USE_HTTPS,
       mobileUrl,
       qrCode: qrDataUrl
     });
